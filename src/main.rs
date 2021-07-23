@@ -21,11 +21,9 @@ struct CliArgs {
 }
 
 fn main() {
-    let args = CliArgs::parse();
+    let _args = CliArgs::parse();
 
     let config = Config::default();
     let speller = Speller::new(config);
-    speller.spell_word("sone");
-
-    println!("Hello, {:?}!", args);
+    speller.spell_word("суббботу");
 }

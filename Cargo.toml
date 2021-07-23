@@ -10,6 +10,6 @@ description = "Search tool and lib for typos in the text, files and websites"
 [dependencies]
 clap = "3.0.0-beta.2"
 reqwest = { version = "0.11.4", features = ["blocking", "json"] }
-serde = "1.0.126"
+serde = { version = "1.0.126", features = ["derive"] }
 serde_json = "1.0.64"
 thiserror = "1.0"

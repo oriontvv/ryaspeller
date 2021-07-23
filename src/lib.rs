@@ -1,12 +1,18 @@
+extern crate serde;
+
+use std::default;
 use std::path::Path;
-use std::{collections::HashMap, default};
 
 use serde::{Deserialize, Serialize};
 
+#[derive(Clone, Debug)]
 pub struct Config {
     lang: String,
 
-    ignore_uppercase: bool,
+    ignore_digits: bool,
+    ignore_urls: bool,
+    find_repeat_words: bool,
+    ignore_capitalization: bool,
 }
 
 impl Config {
@@ -14,7 +20,7 @@ impl Config {
         Self::default()
     }
 
-    pub fn from_file(path: &Path) -> Self {
+    pub fn from_file(_path: &Path) -> Self {
         // TODO
         Self::default()
     }
@@ -28,19 +34,35 @@ impl Config {
 impl default::Default for Config {
     fn default() -> Self {
         Config {
-            lang: String::from("en"),
-            ignore_uppercase: false,
+            lang: String::from("ru,en"),
+            ignore_digits: false,
+            ignore_urls: false,
+            find_repeat_words: false,
+            ignore_capitalization: false,
         }
     }
 }
 
-// #[derive(Debug, Serialize)]
-// struct RequestData<'a> {
-//     text: &'a str,
-//     options: u32,
-//     lang: &'a str,
-//     format: &'a str,
-// }
+#[derive(Debug, Serialize)]
+struct RequestData<'a> {
+    text: &'a str,
+    options: u32,
+    lang: &'a str,
+    format: &'a str,
+}
+
+#[derive(Debug, Deserialize)]
+struct SpellResult {
+    code: u32,
+    col: u32,
+    len: u32,
+    pos: u32,
+    row: u32,
+    s: Vec<String>,
+    word: String,
+}
+
+type SpellResults = Vec<SpellResult>;
 
 pub struct Speller {
     api_url: String,
@@ -54,7 +76,7 @@ impl Speller {
             api_url: String::from(
                 "https://speller.yandex.net/services/spellservice.json/checkText",
             ),
-            config: config,
+            config,
             client: reqwest::blocking::Client::new(),
         }
     }
@@ -70,38 +92,42 @@ impl Speller {
     fn api_options(&self) -> u32 {
         let mut options = 0u32;
 
-        if self.config.ignore_uppercase {
-            options |= 1
+        if self.config.ignore_digits {
+            options |= 2
+        }
+
+        if self.config.ignore_urls {
+            options |= 4
+        }
+
+        if self.config.find_repeat_words {
+            options |= 8
+        }
+
+        if self.config.ignore_capitalization {
+            options |= 512
         }
 
         options
     }
 
-    fn call_api(&self, text: &str) -> Result<String, reqwest::Error> {
-        let options = String::from(self.api_options().to_string());
-        let mut data = HashMap::new();
-        data.insert("text", text);
-        data.insert("options", options.as_str());
-        data.insert("lang", "en");
-        data.insert("format", "auto");
+    fn call_api(&self, text: &str) -> Result<SpellResults, reqwest::Error> {
+        assert!(text.len() < 10_000);
 
-        // let data = RequestData {
-        //     text: text,
-        //     options: self.api_options(),
-        //     lang: &"en",
-        //     format: &"auto",
-        // };
-        //
-        // dbg!(data);
+        let url = format!(
+            "{}?text={}&options={}&lang={}&format={}",
+            self.api_url,
+            text,
+            self.api_options(),
+            self.config.lang,
+            &"plain",
+        );
+        let response = self.client.get(url).send()?;
 
-        let response = self.client.post(self.api_url.as_str()).json(&data).send()?;
+        let is_ok = response.status().is_success();
+        assert!(is_ok);
 
-        if (!response.status().is_success()) {
-            return Ok("".to_string());
-        }
-
-        dbg!(response.text());
-
-        Ok(String::from(""))
+        let results = response.json::<SpellResults>()?;
+        Ok(results)
     }
 }
