@@ -34,13 +34,13 @@ impl default::Default for Config {
     }
 }
 
-#[derive(Debug, Serialize)]
-struct RequestData<'a> {
-    text: &'a str,
-    options: u32,
-    lang: &'a str,
-    format: &'a str,
-}
+// #[derive(Debug, Serialize)]
+// struct RequestData<'a> {
+//     text: &'a str,
+//     options: u32,
+//     lang: &'a str,
+//     format: &'a str,
+// }
 
 pub struct Speller {
     api_url: String,
@@ -79,20 +79,20 @@ impl Speller {
 
     fn call_api(&self, text: &str) -> Result<String, reqwest::Error> {
         let options = String::from(self.api_options().to_string());
-        // let mut data = HashMap::new();
-        // data.insert("text", text);
-        // data.insert("options", options.as_str());
-        // data.insert("lang", "en");
-        // data.insert("format", "auto");
+        let mut data = HashMap::new();
+        data.insert("text", text);
+        data.insert("options", options.as_str());
+        data.insert("lang", "en");
+        data.insert("format", "auto");
 
-        let data = RequestData {
-            text: text,
-            options: self.api_options(),
-            lang: &"en",
-            format: &"auto",
-        };
-
-        dbg!(data);
+        // let data = RequestData {
+        //     text: text,
+        //     options: self.api_options(),
+        //     lang: &"en",
+        //     format: &"auto",
+        // };
+        //
+        // dbg!(data);
 
         let response = self.client.post(self.api_url.as_str()).json(&data).send()?;
 

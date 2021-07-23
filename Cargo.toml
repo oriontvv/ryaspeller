@@ -3,16 +3,9 @@ name = "ryaspeller"
 version = "0.1.0"
 authors = ["oriontvv <taranov.vv@gmail.com>"]
 edition = "2018"
+description = "Search tool and lib for typos in the text, files and websites"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[lib]
-name = "ryaspeller"
-path = "src/lib.rs"
-
-[[bin]]
-name = "ryaspeller"
-path = "src/bin/main.rs"
 
 [dependencies]
 clap = "3.0.0-beta.2"
