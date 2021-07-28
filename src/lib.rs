@@ -1,58 +1,14 @@
+mod config;
+
 extern crate serde;
 
-use std::default;
-use std::path::Path;
-
+use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug)]
-pub struct Config {
-    lang: String,
-
-    ignore_digits: bool,
-    ignore_urls: bool,
-    find_repeat_words: bool,
-    ignore_capitalization: bool,
-}
-
-impl Config {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    pub fn from_file(_path: &Path) -> Self {
-        // TODO
-        Self::default()
-    }
-
-    pub fn lang(&mut self, lang: &str) -> &mut Config {
-        self.lang = lang.into();
-        self
-    }
-}
-
-impl default::Default for Config {
-    fn default() -> Self {
-        Config {
-            lang: String::from("ru,en"),
-            ignore_digits: false,
-            ignore_urls: false,
-            find_repeat_words: false,
-            ignore_capitalization: false,
-        }
-    }
-}
-
-#[derive(Debug, Serialize)]
-struct RequestData<'a> {
-    text: &'a str,
-    options: u32,
-    lang: &'a str,
-    format: &'a str,
-}
+pub use config::{Config, Language, Languages};
 
 #[derive(Debug, Deserialize)]
-struct SpellResult {
+pub struct SpellResult {
     code: u32,
     col: u32,
     len: u32,
@@ -62,12 +18,20 @@ struct SpellResult {
     word: String,
 }
 
-type SpellResults = Vec<SpellResult>;
+pub type SpellResults = Vec<SpellResult>;
 
 pub struct Speller {
     api_url: String,
     config: Config,
     client: reqwest::blocking::Client,
+}
+
+#[derive(Debug, Serialize)]
+struct RequestData<'a> {
+    text: &'a str,
+    options: u32,
+    lang: &'a str,
+    format: &'a str,
 }
 
 impl Speller {
@@ -80,13 +44,24 @@ impl Speller {
             client: reqwest::blocking::Client::new(),
         }
     }
-    pub fn spell_word(&self, text: &str) {
-        self.call_api(text).unwrap();
+
+    pub fn spell_text(&self, text: &str) -> Result<String> {
+        let spell_results: SpellResults = self.call_api(text)?;
+
+        let mut result_text = text.to_string();
+        for spell_result in spell_results {
+            if !spell_result.s.is_empty() {
+                let word = spell_result.word;
+                let suggestion = &spell_result.s[0];
+                result_text = result_text.replace(&word, suggestion);
+            }
+        }
+
+        Ok(result_text)
     }
 
-    pub fn spell_text(&self, text: &str) {
-        // TODO
-        self.spell_word(text);
+    pub fn check_text(&self, text: &str) -> Result<SpellResults> {
+        self.call_api(text)
     }
 
     fn api_options(&self) -> u32 {
@@ -111,21 +86,24 @@ impl Speller {
         options
     }
 
-    fn call_api(&self, text: &str) -> Result<SpellResults, reqwest::Error> {
-        assert!(text.len() < 10_000);
+    fn call_api(&self, text: &str) -> Result<SpellResults> {
+        if text.len() >= 10_000 {
+            return Err(anyhow!("Input text is too long"));
+        }
 
         let url = format!(
             "{}?text={}&options={}&lang={}&format={}",
             self.api_url,
             text,
             self.api_options(),
-            self.config.lang,
+            self.config.langs,
             &"plain",
         );
         let response = self.client.get(url).send()?;
 
-        let is_ok = response.status().is_success();
-        assert!(is_ok);
+        if !response.status().is_success() {
+            return Err(anyhow!("Failed to call api {}", response.text()?));
+        }
 
         let results = response.json::<SpellResults>()?;
         Ok(results)

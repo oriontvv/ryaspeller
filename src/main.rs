@@ -1,11 +1,13 @@
-use clap::{crate_authors, AppSettings, Clap};
+mod config;
+
+use clap::{crate_authors, crate_description, crate_name, crate_version, AppSettings, Clap};
 use ryaspeller::{Config, Speller};
 
 #[derive(Clap, Debug)]
 #[clap(
-    about = "Search tool typos in the text, files and websites.",
-    name = "ryaspeller",
-    version = "1.0",
+    about = crate_description!(),
+    name = crate_name!(),
+    version = crate_version!(),
     author = crate_authors!()
 )]
 #[clap(setting = AppSettings::ColoredHelp)]
@@ -25,5 +27,6 @@ fn main() {
 
     let config = Config::default();
     let speller = Speller::new(config);
-    speller.spell_word("суббботу");
+    let spelled = speller.spell_text("В суббботу утромъ").unwrap();
+    dbg!(spelled);
 }
