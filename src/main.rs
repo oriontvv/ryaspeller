@@ -1,7 +1,9 @@
 mod config;
 
+use std::str::FromStr;
+
 use clap::{crate_authors, crate_description, crate_name, crate_version, AppSettings, Clap};
-use ryaspeller::{Config, Speller};
+use ryaspeller::{Config, Languages, Speller};
 
 #[derive(Clap, Debug)]
 #[clap(
@@ -20,13 +22,51 @@ struct CliArgs {
 
     #[clap(short, long)]
     lang: Option<String>,
+    #[clap(long, takes_value = false)]
+    ignore_digits: bool,
+    #[clap(long, takes_value = false)]
+    ignore_urls: bool,
+    #[clap(long, takes_value = false)]
+    find_repeat_words: bool,
+    #[clap(long, takes_value = false)]
+    ignore_capitalization: bool,
+}
+
+fn create_config(args: &mut CliArgs) -> Result<Config, String> {
+    let mut config = Config::default();
+
+    if let Some(lang) = &args.lang {
+        let languages = Languages::from_str(&lang)?;
+        config.set_languages(languages)?;
+    }
+
+    config.set_ignore_digits(args.ignore_digits);
+    config.set_ignore_urls(args.ignore_urls);
+    config.set_find_repeat_words(args.find_repeat_words);
+    config.set_ignore_capitalization(args.ignore_capitalization);
+
+    Ok(config)
 }
 
 fn main() {
-    let _args = CliArgs::parse();
-
-    let config = Config::default();
+    let mut args = CliArgs::parse();
+    let config = create_config(&mut args).expect("Can't create config");
     let speller = Speller::new(config);
-    let spelled = speller.spell_text("В суббботу утромъ").unwrap();
-    dbg!(spelled);
+
+    if let Some(text) = args.text {
+        let spell_result = speller.spell_text(&text);
+        match spell_result {
+            Err(err) => println!("Spellcheck error for text: {}", err),
+            Ok(spelled) => println!("{}", spelled),
+        }
+    }
+
+    // if let Some(path) = args.path {
+    //     let path = Path::from_str(path);
+    //     let spell_result = speller.spell_path(path);
+    //     match spell_result {
+    //         Err(err) => println!("Spellcheck error for path: {}", err),
+    //         Ok(spelled) => println!("{}", spelled),
+    //     }
+    // }
 }

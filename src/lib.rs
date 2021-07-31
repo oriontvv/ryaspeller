@@ -2,6 +2,8 @@ mod config;
 
 extern crate serde;
 
+use std::path::Path;
+
 use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 
@@ -60,6 +62,10 @@ impl Speller {
         Ok(result_text)
     }
 
+    pub fn spell_path(&self, _path: &Path) -> Result<String> {
+        todo!()
+    }
+
     pub fn check_text(&self, text: &str) -> Result<SpellResults> {
         self.call_api(text)
     }
@@ -90,13 +96,14 @@ impl Speller {
         if text.len() >= 10_000 {
             return Err(anyhow!("Input text is too long"));
         }
+        dbg!(self.api_options());
 
         let url = format!(
             "{}?text={}&options={}&lang={}&format={}",
             self.api_url,
             text,
             self.api_options(),
-            self.config.langs,
+            self.config.languages(),
             &"plain",
         );
         let response = self.client.get(url).send()?;

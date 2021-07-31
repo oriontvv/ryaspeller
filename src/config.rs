@@ -10,14 +10,14 @@ pub enum Language {
 }
 
 impl FromStr for Language {
-    type Err = ();
+    type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "en" => Ok(Language::EN),
             "ru" => Ok(Language::RU),
             "uk" => Ok(Language::UA),
-            _ => Err(()),
+            _ => Err(format!("Unsupported langauge {}", s)),
         }
     }
 }
@@ -52,14 +52,28 @@ impl Languages {
 }
 
 impl FromStr for Languages {
-    type Err = ();
+    type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut languages = Languages::new();
+        let mut errors = String::new();
         for split in s.split(',') {
-            let lang = Language::from_str(split)?;
-            languages.enable_language(lang);
+            let lang = Language::from_str(split);
+            match lang {
+                Err(msg) => {
+                    errors.push(',');
+                    errors.push_str(&msg);
+                }
+                Ok(lang) => {
+                    languages.enable_language(lang);
+                }
+            }
         }
+
+        if !errors.is_empty() {
+            return Err(errors);
+        }
+
         Ok(languages)
     }
 }
@@ -76,8 +90,11 @@ impl Display for Languages {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         static ALL_LANGUAGES: [Language; 3] = [Language::EN, Language::RU, Language::UA];
 
-        let mut first = false;
+        let mut first = true;
         for lang in ALL_LANGUAGES {
+            if self.langs & (lang as usize) == 0 {
+                continue;
+            }
             if !first {
                 write!(f, ",")?;
             }
@@ -91,7 +108,7 @@ impl Display for Languages {
 
 #[derive(Clone, Debug, Copy)]
 pub struct Config {
-    pub langs: Languages,
+    _langs: Languages,
 
     pub ignore_digits: bool,
     pub ignore_urls: bool,
@@ -101,21 +118,21 @@ pub struct Config {
 
 #[allow(dead_code)]
 impl Config {
-    // pub fn from_file(_path: &Path) -> Self {
-    //     // TODO
-    //     Self::default()
-    // }
-
     pub fn languages(&self) -> Languages {
-        self.langs
+        self._langs
+    }
+
+    pub fn set_languages(&mut self, langs: Languages) -> Result<Languages, String> {
+        self._langs = langs;
+        Ok(langs)
     }
 
     pub fn enable_language(&mut self, language: Language) {
-        self.langs.enable_language(language)
+        self._langs.enable_language(language)
     }
 
     pub fn disable_language(&mut self, language: Language) {
-        self.langs.disable_language(language)
+        self._langs.disable_language(language)
     }
 
     pub fn set_ignore_digits(&mut self, value: bool) {
@@ -138,7 +155,7 @@ impl Config {
 impl Default for Config {
     fn default() -> Self {
         Config {
-            langs: Languages::default(),
+            _langs: Languages::default(),
             ignore_digits: false,
             ignore_urls: false,
             find_repeat_words: false,
