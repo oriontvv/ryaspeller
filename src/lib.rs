@@ -96,7 +96,6 @@ impl Speller {
         if text.len() >= 10_000 {
             return Err(anyhow!("Input text is too long"));
         }
-        dbg!(self.api_options());
 
         let url = format!(
             "{}?text={}&options={}&lang={}&format={}",

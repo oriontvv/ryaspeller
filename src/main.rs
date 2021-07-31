@@ -36,7 +36,7 @@ fn create_config(args: &mut CliArgs) -> Result<Config, String> {
     let mut config = Config::default();
 
     if let Some(lang) = &args.lang {
-        let languages = Languages::from_str(&lang)?;
+        let languages = Languages::from_str(lang)?;
         config.set_languages(languages)?;
     }
 
