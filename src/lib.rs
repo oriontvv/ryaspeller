@@ -1,3 +1,33 @@
+/*!
+This crate is a client for [Yandex Speller Api] and a binary tool that
+allows to check spelling in texts, paths and web-pages.
+
+# Usage
+
+This crate is on [crates.io] and can be used by adding `ryaspeller`
+to your dependencies in your project's `Cargo.toml`.
+
+```toml
+[dependencies]
+ryaspeller = "0.1.0"
+```
+
+See [examples] of using.
+
+[Yandex Speller Api]: https://yandex.ru/dev/speller
+[examples]: https://github.com/oriontvv/ryaspeller/blob/master/examples
+[crates.io]: https://crates.io/crates/ryaspeller
+
+*/
+
+#![warn(missing_docs)]
+#![allow(
+    clippy::doc_markdown,
+    clippy::module_name_repetitions,
+    clippy::must_use_candidate,
+    clippy::option_if_let_else
+)]
+
 mod config;
 
 extern crate serde;
@@ -9,22 +39,43 @@ use serde::{Deserialize, Serialize};
 
 pub use config::{Config, Language, Languages};
 
+/// Describes a result of Speller backend-api response
 #[derive(Debug, Deserialize)]
 pub struct SpellResult {
-    code: u32,
+    /// error code
+    pub code: u32,
+    /// column number
     col: u32,
+    /// lenght of the word with error
     len: u32,
+    /// position of the word with error
     pos: u32,
+    /// row number
     row: u32,
+    /// list of suggestions, can be empty
     s: Vec<String>,
+    /// origin word
     word: String,
 }
 
+/// Describes a list of results op Speller backend api response
 pub type SpellResults = Vec<SpellResult>;
 
+/// Main instance, provides spelling functionality.
+/// Must be created with [Config]
+///
+/// Example
+/// ```rust
+/// use ryaspeller::{Config, Speller, SpellResults};
+/// let speller = Speller::new(Config::default());
+/// let spelled: String = speller.spell_text("a text").unwrap();
+/// let result: SpellResults = speller.check_text("a text").unwrap();
+/// ```
 pub struct Speller {
+    /// Corresponding [Config]
+    pub config: Config,
+
     api_url: String,
-    config: Config,
     client: reqwest::blocking::Client,
 }
 
@@ -37,6 +88,7 @@ struct RequestData<'a> {
 }
 
 impl Speller {
+    /// Creates new [Speller] instance
     pub fn new(config: Config) -> Speller {
         Speller {
             api_url: String::from(
@@ -47,6 +99,7 @@ impl Speller {
         }
     }
 
+    /// Correct specified text of current [Speller]
     pub fn spell_text(&self, text: &str) -> Result<String> {
         let spell_results: SpellResults = self.call_api(text)?;
 
@@ -62,10 +115,12 @@ impl Speller {
         Ok(result_text)
     }
 
+    /// Correct texts inside specified path
     pub fn spell_path(&self, _path: &Path) -> Result<String> {
         todo!()
     }
 
+    /// Runs spell cheking for specified text of current [Speller]
     pub fn check_text(&self, text: &str) -> Result<SpellResults> {
         self.call_api(text)
     }

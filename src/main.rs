@@ -1,9 +1,7 @@
 mod config;
 
-use std::str::FromStr;
-
 use clap::{crate_authors, crate_description, crate_name, crate_version, AppSettings, Clap};
-use ryaspeller::{Config, Languages, Speller};
+use ryaspeller::{Config, Speller};
 
 #[derive(Clap, Debug)]
 #[clap(
@@ -36,8 +34,7 @@ fn create_config(args: &mut CliArgs) -> Result<Config, String> {
     let mut config = Config::default();
 
     if let Some(lang) = &args.lang {
-        let languages = Languages::from_str(lang)?;
-        config.set_languages(languages)?;
+        config.set_languages(lang)?;
     }
 
     config.set_ignore_digits(args.ignore_digits);

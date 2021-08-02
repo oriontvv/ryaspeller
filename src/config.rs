@@ -2,10 +2,14 @@ use std::fmt::Display;
 use std::str::FromStr;
 use std::usize;
 
+/// Describes all supported languages
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Language {
+    /// Russian
     RU = 1 << 0,
+    /// English
     EN = 1 << 1,
+    /// Ukranian
     UA = 1 << 2,
 }
 
@@ -32,6 +36,10 @@ impl Display for Language {
         write!(f, "{}", printable)
     }
 }
+
+/// Provides a way to specify a set of supported [Languages](Language)
+///
+/// Should be created with `Languages::default()`
 #[derive(Debug, Clone, Copy)]
 pub struct Languages {
     langs: usize,
@@ -39,13 +47,16 @@ pub struct Languages {
 
 #[allow(dead_code)]
 impl Languages {
-    pub fn new() -> Languages {
+    fn new() -> Languages {
         Languages { langs: 0 }
     }
+
+    /// Enables specified [Language]
     pub fn enable_language(&mut self, language: Language) {
         self.langs |= language as usize;
     }
 
+    /// Disables specified [Language]
     pub fn disable_language(&mut self, language: Language) {
         self.langs |= !(language as usize);
     }
@@ -106,47 +117,85 @@ impl Display for Languages {
     }
 }
 
+/// Provides customization for [speller.rs::Speller]
+///
+/// Can be edited after Speller initialization and all changes will be
+/// applyed to corresponded Speller
+///
+/// Example
+/// ```rust
+/// use ryaspeller::{Config, Speller};
+/// let mut config = Config::default();
+/// let speller = Speller::new(config);
+/// speller.spell_text("can spell a text");
+/// config.set_ignore_digits(true);
+/// speller.spell_text("spelling with updated config");
+/// ```
+
 #[derive(Clone, Debug, Copy)]
 pub struct Config {
     _langs: Languages,
 
+    /// Ignores words with numbers, such as avp17h4534.
     pub ignore_digits: bool,
+
+    /// Ignores Internet addresses, email addresses and filenames.
     pub ignore_urls: bool,
+
+    /// Highlights repetitions of words, consecutive. For example, I flew to to to Cyprus.
     pub find_repeat_words: bool,
+
+    /// Ignores the incorrect use of UPPERCASE / lowercase letters, for example, in the word moscow.
     pub ignore_capitalization: bool,
 }
 
 #[allow(dead_code)]
 impl Config {
+    /// Returns a Set of enabled [Languages]
     pub fn languages(&self) -> Languages {
         self._langs
     }
 
-    pub fn set_languages(&mut self, langs: Languages) -> Result<Languages, String> {
-        self._langs = langs;
-        Ok(langs)
+    /// Parses enabled [Languages] fron string representation
+    ///
+    /// Example
+    /// ```rust
+    /// use ryaspeller::Config;
+    /// let mut config = Config::default();
+    /// config.set_languages("en,ru,uk");
+    /// ```
+    pub fn set_languages(&mut self, langs: &str) -> Result<Languages, String> {
+        let languages = Languages::from_str(langs)?;
+        self._langs = languages;
+        Ok(languages)
     }
 
+    /// Enables specified [Language]
     pub fn enable_language(&mut self, language: Language) {
         self._langs.enable_language(language)
     }
 
+    /// Disables specified [Language]
     pub fn disable_language(&mut self, language: Language) {
         self._langs.disable_language(language)
     }
 
+    /// Sets [`Self::ignore_digits`] option
     pub fn set_ignore_digits(&mut self, value: bool) {
         self.ignore_digits = value
     }
 
+    /// Sets [Self::ignore_urls] option
     pub fn set_ignore_urls(&mut self, value: bool) {
         self.ignore_urls = value
     }
 
+    /// Sets [Self::find_repeat_words] option
     pub fn set_find_repeat_words(&mut self, value: bool) {
         self.find_repeat_words = value
     }
 
+    /// Sets [Self::ignore_capitalization] option
     pub fn set_ignore_capitalization(&mut self, value: bool) {
         self.ignore_capitalization = value
     }
