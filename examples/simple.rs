@@ -1,12 +1,19 @@
 use ryaspeller::{Config, Language, SpellResults, Speller};
 
-fn main() {
-    let mut config = Config::default();
-    let speller: Speller = Speller::new(config);
+fn simplest() {
+    let speller = Speller::new(Config::default());
     let spelled: String = speller.spell_text("В суббботу утромъ.").unwrap();
     assert!(spelled == "В субботу утром.");
+}
 
+fn customize_config() {
+    let mut config = Config::default();
+    let speller: Speller = Speller::new(config);
+
+    // config can be edited after creation of speller
     config.enable_language(Language::EN);
+    config.set_ignore_digits(true);
+
     let spell_results: SpellResults = speller
         .check_text("Some engliish и русскиий тексты")
         .unwrap();
@@ -38,4 +45,9 @@ fn main() {
         word: "русскиий",
     },
      */
+}
+
+fn main() {
+    simplest();
+    customize_config()
 }
