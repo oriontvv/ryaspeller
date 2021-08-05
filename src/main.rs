@@ -1,5 +1,7 @@
 mod config;
 
+use std::path::Path;
+
 use clap::{crate_authors, crate_description, crate_name, crate_version, AppSettings, Clap};
 use ryaspeller::{Config, Speller};
 
@@ -12,11 +14,8 @@ use ryaspeller::{Config, Speller};
 )]
 #[clap(setting = AppSettings::ColoredHelp)]
 struct CliArgs {
-    #[clap(short, long)]
-    path: Option<String>,
-
-    #[clap(short, long)]
-    text: Option<String>,
+    #[clap(multiple = true, required = true)]
+    text_or_path: Vec<String>,
 
     #[clap(short, long)]
     lang: Option<String>,
@@ -37,10 +36,10 @@ fn create_config(args: &mut CliArgs) -> Result<Config, String> {
         config.set_languages(lang)?;
     }
 
-    config.set_ignore_digits(args.ignore_digits);
-    config.set_ignore_urls(args.ignore_urls);
-    config.set_find_repeat_words(args.find_repeat_words);
-    config.set_ignore_capitalization(args.ignore_capitalization);
+    config.ignore_digits = args.ignore_digits;
+    config.ignore_urls = args.ignore_urls;
+    config.find_repeat_words = args.find_repeat_words;
+    config.ignore_capitalization = args.ignore_capitalization;
 
     Ok(config)
 }
@@ -50,20 +49,28 @@ fn main() {
     let config = create_config(&mut args).expect("Can't create config");
     let speller = Speller::new(config);
 
-    if let Some(text) = args.text {
+    for text in args.text_or_path {
+        if text.starts_with("http") {
+            let spell_result = speller.spell_url(&text);
+            match spell_result {
+                Err(err) => println!("Spellcheck error for url: {}", err),
+                Ok(spelled) => println!("{}", spelled),
+            }
+            continue;
+        }
+
+        let path = Path::new(&text);
+        if path.exists() {
+            if let Err(err) = speller.spell_path(path) {
+                println!("Spellcheck error for path: {}", err)
+            }
+            continue;
+        }
+
         let spell_result = speller.spell_text(&text);
         match spell_result {
             Err(err) => println!("Spellcheck error for text: {}", err),
             Ok(spelled) => println!("{}", spelled),
         }
     }
-
-    // if let Some(path) = args.path {
-    //     let path = Path::from_str(path);
-    //     let spell_result = speller.spell_path(path);
-    //     match spell_result {
-    //         Err(err) => println!("Spellcheck error for path: {}", err),
-    //         Ok(spelled) => println!("{}", spelled),
-    //     }
-    // }
 }

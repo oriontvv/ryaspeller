@@ -117,7 +117,7 @@ impl Display for Languages {
     }
 }
 
-/// Provides customization for [speller.rs::Speller]
+/// Provides customization for [crate::Speller]
 ///
 /// Can be edited after Speller initialization and all changes will be
 /// applyed to corresponded Speller
@@ -128,13 +128,16 @@ impl Display for Languages {
 /// let mut config = Config::default();
 /// let speller = Speller::new(config);
 /// speller.spell_text("can spell a text");
-/// config.set_ignore_digits(true);
+/// config.ignore_digits = true;
 /// speller.spell_text("spelling with updated config");
 /// ```
 
 #[derive(Clone, Debug, Copy)]
 pub struct Config {
     _langs: Languages,
+
+    /// Enables html format instead of plain text.
+    pub is_html: bool,
 
     /// Ignores words with numbers, such as avp17h4534.
     pub ignore_digits: bool,
@@ -155,7 +158,6 @@ impl Config {
     pub fn languages(&self) -> Languages {
         self._langs
     }
-
     /// Parses enabled [Languages] fron string representation
     ///
     /// Example
@@ -179,32 +181,13 @@ impl Config {
     pub fn disable_language(&mut self, language: Language) {
         self._langs.disable_language(language)
     }
-
-    /// Sets [`Self::ignore_digits`] option
-    pub fn set_ignore_digits(&mut self, value: bool) {
-        self.ignore_digits = value
-    }
-
-    /// Sets [Self::ignore_urls] option
-    pub fn set_ignore_urls(&mut self, value: bool) {
-        self.ignore_urls = value
-    }
-
-    /// Sets [Self::find_repeat_words] option
-    pub fn set_find_repeat_words(&mut self, value: bool) {
-        self.find_repeat_words = value
-    }
-
-    /// Sets [Self::ignore_capitalization] option
-    pub fn set_ignore_capitalization(&mut self, value: bool) {
-        self.ignore_capitalization = value
-    }
 }
 
 impl Default for Config {
     fn default() -> Self {
         Config {
             _langs: Languages::default(),
+            is_html: false,
             ignore_digits: false,
             ignore_urls: false,
             find_repeat_words: false,

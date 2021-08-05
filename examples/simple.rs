@@ -12,7 +12,7 @@ fn customize_config() {
 
     // config can be edited after creation of speller
     config.enable_language(Language::EN);
-    config.set_ignore_digits(true);
+    config.ignore_digits = true;
 
     let spell_results: SpellResults = speller
         .check_text("Some engliish и русскиий тексты")

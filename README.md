@@ -8,3 +8,18 @@
 [ryaspeller](https://github.com/oriontvv/ryaspeller) (Rust Yandex Speller) is a tool and library for searching typos in text, files and websites.
 
 Used [Yandex.Speller API](https://tech.yandex.ru/speller/doc/dg/concepts/About-docpage/). ([restrictions](<https://yandex.ru/legal/speller_api/>))
+
+## Installation
+
+```bash
+cargo install ryaspeller
+```
+
+## Usage
+```bash
+$ ryaspeller "text_or_path_or_url"
+$ ryaspeller russt --lang en
+rust
+$ ryaspeller ./doc --lang en,ru
+$ ryaspeller https://team-tricky.github.io > page.html
+```
