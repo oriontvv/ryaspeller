@@ -2,19 +2,19 @@
 name: Release
 
 on:
-  push
-    # tags:
-    #   - '*.*.*'
+  push:
+    tags:
+      - '*.*.*'
 
 jobs:
-  # release-crates:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: publish package to crates
-  #       run: |
-  #         cargo package
-  #         cargo publish --token ${{ secrets.CARGO_TOKEN }}
+  release-crates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: publish package to crates
+        run: |
+          cargo package
+          cargo publish --token ${{ secrets.CARGO_TOKEN }}
 
   build:
     runs-on: ubuntu-latest
@@ -39,23 +39,23 @@ jobs:
           name: ryaspeller_amd64
           path: target/release/ryaspeller_amd64
 
-      # - name: Release
-      #   uses: softprops/action-gh-release@v1
-      #   if: startsWith(github.ref, 'refs/tags/')
-      #   with:
-      #     files: |
-      #       target/release/ryaspeller_amd_64
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            target/release/ryaspeller_amd_64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Upload binary
-      #   uses: svenstaro/upload-release-action@v1-release
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file: target/release/ryaspeller_amd64
-      #     asset_name: ryaspeller_amd64
-      #     tag: ${{ github.ref }}
-      #     overwrite: true
+      - name: Upload binary
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/release/ryaspeller_amd64
+          asset_name: ryaspeller_amd64
+          tag: ${{ github.ref }}
+          overwrite: true
 
   build-win:
     runs-on: windows-latest
@@ -80,22 +80,22 @@ jobs:
           name: ryaspeller.exe
           path: target/release/ryaspeller.exe
 
-      # - name: Release
-      #   uses: softprops/action-gh-release@v1
-      #   if: startsWith(github.ref, 'refs/tags/')
-      #   with:
-      #     files: target/release/ryaspeller.exe
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: target/release/ryaspeller.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      # - name: Upload binary
-      #   uses: svenstaro/upload-release-action@v1-release
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file: target/release/ryaspeller.exe
-      #     asset_name: ryaspeller.exe
-      #     tag: ${{ github.ref }}
-      #     overwrite: true
+      - name: Upload binary
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/release/ryaspeller.exe
+          asset_name: ryaspeller.exe
+          tag: ${{ github.ref }}
+          overwrite: true
   
   build-mac:
     runs-on: macos-latest
@@ -120,20 +120,20 @@ jobs:
           name: ryaspeller_darwin
           path: target/release/ryaspeller_darwin
 
-      # - name: Release
-      #   uses: softprops/action-gh-release@v1
-      #   if: startsWith(github.ref, 'refs/tags/')
-      #   with:
-      #     files: |
-      #       target/release/ryaspeller_darwin
-      #   env:
-      #     GITHUB_TOKEN: $ {{ secrests.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            target/release/ryaspeller_darwin
+        env:
+          GITHUB_TOKEN: $ {{ secrests.GITHUB_TOKEN }}
     
-      # - name: Upload binary
-      #   uses: svenstaro/upload-release-action@v1-release
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file: target/release/ryaspeller_darwin
-      #     asset_name: ryaspeller_darwin
-      #     tag: ${{ github.ref }}
-      #     overwrite: true
+      - name: Upload binary
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/release/ryaspeller_darwin
+          asset_name: ryaspeller_darwin
+          tag: ${{ github.ref }}
+          overwrite: true
