@@ -16,6 +16,9 @@ cargo install ryaspeller
 ```
 
 ## Usage
+
+ * binary:
+
 ```bash
 $ ryaspeller "text_or_path_or_url"
 $ ryaspeller russt --lang en
@@ -23,3 +26,14 @@ rust
 $ ryaspeller ./doc --lang en,ru
 $ ryaspeller https://team-tricky.github.io > page.html
 ```
+
+ * library:
+ ```rust
+ use ryaspeller::{Config, Speller};
+
+let speller = Speller::new(Config::default());
+let spelled = speller.spell_text("Triky Custle is a funny puzzle game.").unwrap();
+assert!(spelled == "Tricky Castle is a funny puzzle game.");
+ ```
+
+Also there are available [python](https://github.com/oriontvv/pyaspeller/) and [javascript](https://github.com/hcodes/yaspeller) versions of this speller.
