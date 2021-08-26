@@ -14,7 +14,7 @@ use ryaspeller::{Config, Speller};
 )]
 #[clap(setting = AppSettings::ColoredHelp)]
 struct CliArgs {
-    #[clap(multiple = true, required = true)]
+    #[clap(multiple_values = true, required = true)]
     text_or_path: Vec<String>,
 
     #[clap(short, long)]
