@@ -47,20 +47,33 @@ use walkdir::WalkDir;
 /// Describes a result of Speller backend-api response
 #[derive(Debug, Deserialize)]
 pub struct SpellResult {
-    /// error code
+    /// error code, can be described with [Self::get_error_name]
     pub code: u32,
     /// column number
-    col: u32,
+    pub col: u32,
     /// lenght of the word with error
-    len: u32,
+    pub len: u32,
     /// position of the word with error
-    pos: u32,
+    pub pos: u32,
     /// row number
-    row: u32,
+    pub row: u32,
     /// list of suggestions, can be empty
-    s: Vec<String>,
+    pub s: Vec<String>,
     /// origin word
-    word: String,
+    pub word: String,
+}
+
+impl SpellResult {
+    /// Decodes error code if it has detected
+    pub fn get_error_name(&self) -> Option<&str> {
+        match self.code {
+            1 => Some("ERROR_UNKNOWN_WORD"),
+            2 => Some("ERROR_REPEAT_WORD"),
+            3 => Some("ERROR_CAPITALIZATION"),
+            4 => Some("ERROR_UNKNOWN_WORD"),
+            _ => None,
+        }
+    }
 }
 
 /// Describes a list of results of Speller backend api response
