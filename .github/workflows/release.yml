@@ -127,7 +127,7 @@ jobs:
           files: |
             target/release/ryaspeller_darwin
         env:
-          GITHUB_TOKEN: $ {{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
       - name: Upload binary
         uses: svenstaro/upload-release-action@v1-release
