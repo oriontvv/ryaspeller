@@ -21,7 +21,7 @@ impl FromStr for Language {
             "en" => Ok(Language::EN),
             "ru" => Ok(Language::RU),
             "uk" => Ok(Language::UA),
-            _ => Err(format!("Unsupported langauge {}", s)),
+            _ => Err(format!("Unsupported language {}", s)),
         }
     }
 }
