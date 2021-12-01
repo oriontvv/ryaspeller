@@ -62,7 +62,7 @@ fn main() {
 
     for text in text_or_paths {
         if text.starts_with("http") {
-            let spell_result = speller.spell_url(&text);
+            let spell_result = speller.spell_url(text);
             match spell_result {
                 Err(err) => println!("Spellcheck error for url: {}", err),
                 Ok(spelled) => println!("{}", spelled),
@@ -78,7 +78,7 @@ fn main() {
             continue;
         }
 
-        let spell_result = speller.spell_text(&text);
+        let spell_result = speller.spell_text(text);
         match spell_result {
             Err(err) => println!("Spellcheck error for text: {}", err),
             Ok(spelled) => println!("{}", spelled),
