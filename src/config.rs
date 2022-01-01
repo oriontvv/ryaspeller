@@ -45,7 +45,6 @@ pub struct Languages {
     langs: usize,
 }
 
-#[allow(dead_code)]
 impl Languages {
     fn new() -> Languages {
         Languages { langs: 0 }
@@ -132,7 +131,7 @@ impl Display for Languages {
 /// speller.spell_text("spelling with updated config");
 /// ```
 
-#[derive(Clone, Debug, Copy)]
+#[derive(Clone, Debug, Copy, Default)]
 pub struct Config {
     _langs: Languages,
 
@@ -152,7 +151,6 @@ pub struct Config {
     pub ignore_capitalization: bool,
 }
 
-#[allow(dead_code)]
 impl Config {
     /// Returns a Set of enabled [Languages]
     pub fn languages(&self) -> Languages {
@@ -180,18 +178,5 @@ impl Config {
     /// Disables specified [Language]
     pub fn disable_language(&mut self, language: Language) {
         self._langs.disable_language(language)
-    }
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Config {
-            _langs: Languages::default(),
-            is_html: false,
-            ignore_digits: false,
-            ignore_urls: false,
-            find_repeat_words: false,
-            ignore_capitalization: false,
-        }
     }
 }
