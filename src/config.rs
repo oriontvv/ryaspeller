@@ -45,6 +45,7 @@ pub struct Languages {
     langs: usize,
 }
 
+#[allow(dead_code)]
 impl Languages {
     fn new() -> Languages {
         Languages { langs: 0 }
@@ -151,6 +152,7 @@ pub struct Config {
     pub ignore_capitalization: bool,
 }
 
+#[allow(dead_code)]
 impl Config {
     /// Returns a Set of enabled [Languages]
     pub fn languages(&self) -> Languages {

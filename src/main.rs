@@ -2,67 +2,51 @@ mod config;
 
 use std::path::Path;
 
-use clap::{crate_authors, crate_description, crate_name, crate_version, App, Arg, ArgMatches};
+use clap::Parser;
 use ryaspeller::{Config, Speller};
 
-fn create_config(args: &ArgMatches) -> Result<Config, String> {
+#[derive(Parser, Debug)]
+#[clap(about, version, author)]
+struct CliArgs {
+    #[clap(multiple_values = true, required = true)]
+    text_or_path: Vec<String>,
+
+    #[clap(short, long)]
+    lang: Option<String>,
+    #[clap(long, takes_value = false)]
+    ignore_digits: bool,
+    #[clap(long, takes_value = false)]
+    ignore_urls: bool,
+    #[clap(long, takes_value = false)]
+    find_repeat_words: bool,
+    #[clap(long, takes_value = false)]
+    ignore_capitalization: bool,
+}
+
+fn create_config(args: &mut CliArgs) -> Result<Config, String> {
     let mut config = Config::default();
 
-    if let Some(lang) = args.value_of("lang") {
+    if let Some(lang) = &args.lang {
         config.set_languages(lang)?;
     }
 
-    config.ignore_digits = args.is_present("ignore_digits");
-    config.ignore_urls = args.is_present("ignore_urls");
-    config.find_repeat_words = args.is_present("find_repeat_words");
-    config.ignore_capitalization = args.is_present("ignore_capitalization");
+    config.ignore_digits = args.ignore_digits;
+    config.ignore_urls = args.ignore_urls;
+    config.find_repeat_words = args.find_repeat_words;
+    config.ignore_capitalization = args.ignore_capitalization;
 
     Ok(config)
 }
 
 fn main() {
-    let args = App::new(crate_name!())
-        .version(crate_version!())
-        .about(crate_description!())
-        .author(crate_authors!())
-        .arg(
-            Arg::with_name("text_or_path")
-                .required(true)
-                .multiple(true)
-                .use_delimiter(false)
-                .takes_value(true),
-        )
-        .arg(Arg::with_name("lang").long("lang").takes_value(true))
-        .arg(
-            Arg::with_name("ignore_digits")
-                .long("ignore_digits")
-                .takes_value(false),
-        )
-        .arg(
-            Arg::with_name("ignore_urls")
-                .long("ignore_urls")
-                .takes_value(false),
-        )
-        .arg(
-            Arg::with_name("find_repeat_words")
-                .long("find_repeat_words")
-                .takes_value(false),
-        )
-        .arg(
-            Arg::with_name("ignore_capitalization")
-                .long("ignore_capitalization")
-                .takes_value(false),
-        )
-        .get_matches();
+    let mut args = CliArgs::parse();
 
-    let config = create_config(&args).expect("Can't create config");
+    let config = create_config(&mut args).expect("Can't create config");
     let speller = Speller::new(config);
 
-    let text_or_paths = args.values_of("text_or_path").unwrap().collect::<Vec<_>>();
-
-    for text in text_or_paths {
+    for text in args.text_or_path {
         if text.starts_with("http") {
-            let spell_result = speller.spell_url(text);
+            let spell_result = speller.spell_url(&text);
             match spell_result {
                 Err(err) => println!("Spellcheck error for url: {}", err),
                 Ok(spelled) => println!("{}", spelled),
@@ -78,7 +62,7 @@ fn main() {
             continue;
         }
 
-        let spell_result = speller.spell_text(text);
+        let spell_result = speller.spell_text(&text);
         match spell_result {
             Err(err) => println!("Spellcheck error for text: {}", err),
             Ok(spelled) => println!("{}", spelled),
