@@ -10,7 +10,7 @@ jobs:
   release-crates:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: publish package to crates
         run: |
           cargo package
@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
       - name: Install latest rust toolchain
         uses: actions-rs/toolchain@v1
@@ -34,7 +34,7 @@ jobs:
         run: cargo build --all --release && strip target/release/ryaspeller && mv target/release/ryaspeller target/release/ryaspeller_amd64
 
       - name: Upload binary
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v3
         with:
           name: ryaspeller_amd64
           path: target/release/ryaspeller_amd64
@@ -62,7 +62,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
       
       - name: Install latest rust toolchain
         uses: actions-rs/toolchain@v1
@@ -75,7 +75,7 @@ jobs:
         run: cargo build --all --release
       
       - name: Upload binary
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v3
         with:
           name: ryaspeller.exe
           path: target/release/ryaspeller.exe
@@ -102,7 +102,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
       - name: Install latest rust toolchain
         uses: actions-rs/toolchain@v1
@@ -115,7 +115,7 @@ jobs:
         run: cargo build --all --release && strip target/release/ryaspeller && mv target/release/ryaspeller target/release/ryaspeller_darwin
 
       - name: Upload binary
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v3
         with:
           name: ryaspeller_darwin
           path: target/release/ryaspeller_darwin
