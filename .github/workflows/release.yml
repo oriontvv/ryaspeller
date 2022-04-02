@@ -34,7 +34,7 @@ jobs:
         run: cargo build --all --release && strip target/release/ryaspeller && mv target/release/ryaspeller target/release/ryaspeller_amd64
 
       - name: Upload binary
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v3
         with:
           name: ryaspeller_amd64
           path: target/release/ryaspeller_amd64
@@ -75,7 +75,7 @@ jobs:
         run: cargo build --all --release
       
       - name: Upload binary
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v3
         with:
           name: ryaspeller.exe
           path: target/release/ryaspeller.exe
@@ -115,7 +115,7 @@ jobs:
         run: cargo build --all --release && strip target/release/ryaspeller && mv target/release/ryaspeller target/release/ryaspeller_darwin
 
       - name: Upload binary
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v3
         with:
           name: ryaspeller_darwin
           path: target/release/ryaspeller_darwin
