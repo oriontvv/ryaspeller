@@ -110,7 +110,7 @@ const FORMAT_HTML: &str = "html";
 const API_URL: &str = "https://speller.yandex.net/services/spellservice.json/checkText";
 
 impl Default for Speller {
-    pub fn default() -> Self {
+    fn default() -> Self {
         Self::new(Config::default())
     }
 }
