@@ -29,9 +29,8 @@ $ ryaspeller https://team-tricky.github.io > page.html
 
  * library:
  ```rust
- use ryaspeller::{Config, Speller};
-
-let speller = Speller::new(Config::default());
+use ryaspeller::Speller;
+let speller = Speller::default();
 let spelled = speller.spell_text("Triky Custle is a funny puzzle game.").unwrap();
 assert!(spelled == "Tricky Castle is a funny puzzle game.");
  ```
