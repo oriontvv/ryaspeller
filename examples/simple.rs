@@ -1,7 +1,7 @@
 use ryaspeller::{Config, Language, SpellResults, Speller};
 
 fn simplest() {
-    let speller = Speller::new(Config::default());
+    let speller = Speller::default();
     let spelled: String = speller.spell_text("В суббботу утромъ.").unwrap();
     assert!(spelled == "В субботу утром.");
 }
