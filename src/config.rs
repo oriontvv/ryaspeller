@@ -3,7 +3,7 @@ use std::str::FromStr;
 use std::usize;
 
 /// Describes all supported languages
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Language {
     /// Russian
     RU = 1 << 0,
