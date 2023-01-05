@@ -58,7 +58,7 @@ impl Languages {
 
     /// Disables specified [Language]
     pub fn disable_language(&mut self, language: Language) {
-        self.langs |= !(language as usize);
+        self.langs &= !(language as usize);
     }
 }
 
@@ -180,5 +180,31 @@ impl Config {
     /// Disables specified [Language]
     pub fn disable_language(&mut self, language: Language) {
         self._langs.disable_language(language)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_enable_language() {
+        let mut languages = Languages::new();
+        assert_eq!(languages.langs, 0);
+
+        languages.enable_language(Language::EN);
+        assert_eq!(languages.langs, 2);
+
+        languages.disable_language(Language::EN);
+        assert_eq!(languages.langs, 0);
+    }
+
+    #[test]
+    fn test_disable_language() {
+        let mut languages = Languages::default();
+        assert_eq!(languages.langs, 3);
+
+        languages.disable_language(Language::EN);
+        assert_eq!(languages.langs, 1);
     }
 }
