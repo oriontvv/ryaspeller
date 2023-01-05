@@ -8,18 +8,18 @@ use ryaspeller::{Config, Speller};
 #[derive(Parser, Debug)]
 #[clap(about, version, author)]
 struct CliArgs {
-    #[clap(multiple_values = true, required = true)]
+    #[clap(required = true)]
     text_or_path: Vec<String>,
 
     #[clap(short, long)]
     lang: Option<String>,
-    #[clap(long, takes_value = false)]
+    #[clap(long)]
     ignore_digits: bool,
-    #[clap(long, takes_value = false)]
+    #[clap(long)]
     ignore_urls: bool,
-    #[clap(long, takes_value = false)]
+    #[clap(long)]
     find_repeat_words: bool,
-    #[clap(long, takes_value = false)]
+    #[clap(long)]
     ignore_capitalization: bool,
 }
 
