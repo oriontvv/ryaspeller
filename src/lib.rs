@@ -9,7 +9,7 @@ to your dependencies in your project's `Cargo.toml`.
 
 ```toml
 [dependencies]
-ryaspeller = "0.1.3"
+ryaspeller = "0.1"
 ```
 
 See [examples] of using.
