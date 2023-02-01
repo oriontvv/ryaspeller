@@ -168,7 +168,7 @@ impl Speller {
         // TODO: collect all texts and use batch request to minimize requsts count
         for entry in WalkDir::new(path) {
             if let Err(err) = self._spell_file(entry?.path()) {
-                println!("Error: {}", err);
+                println!("Error: {err}");
             }
         }
         Ok(())

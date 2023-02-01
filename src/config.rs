@@ -21,7 +21,7 @@ impl FromStr for Language {
             "en" => Ok(Language::EN),
             "ru" => Ok(Language::RU),
             "uk" => Ok(Language::UA),
-            _ => Err(format!("Unsupported language {}", s)),
+            _ => Err(format!("Unsupported language {s}")),
         }
     }
 }
@@ -33,7 +33,7 @@ impl Display for Language {
             Language::EN => "en",
             Language::UA => "uk",
         };
-        write!(f, "{}", printable)
+        write!(f, "{printable}")
     }
 }
 
@@ -109,7 +109,7 @@ impl Display for Languages {
             if !first {
                 write!(f, ",")?;
             }
-            write!(f, "{}", lang)?;
+            write!(f, "{lang}")?;
             first = false;
         }
 

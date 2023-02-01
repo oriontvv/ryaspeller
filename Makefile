@@ -53,6 +53,8 @@ fmt:
 clippy:
 	cargo clippy --workspace --all-features
 
+lint: fmt clippy
+
 clippy-nightly:
 	cargo +nightly clippy --workspace --all-features
 

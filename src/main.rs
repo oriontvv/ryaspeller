@@ -48,8 +48,8 @@ fn main() {
         if text.starts_with("http") {
             let spell_result = speller.spell_url(&text);
             match spell_result {
-                Err(err) => println!("Spellcheck error for url: {}", err),
-                Ok(spelled) => println!("{}", spelled),
+                Err(err) => println!("Spellcheck error for url: {err}"),
+                Ok(spelled) => println!("{spelled}"),
             }
             continue;
         }
@@ -57,15 +57,15 @@ fn main() {
         let path = Path::new(&text);
         if path.exists() {
             if let Err(err) = speller.spell_path(path) {
-                println!("Spellcheck error for path: {}", err)
+                println!("Spellcheck error for path: {err}")
             }
             continue;
         }
 
         let spell_result = speller.spell_text(&text);
         match spell_result {
-            Err(err) => println!("Spellcheck error for text: {}", err),
-            Ok(spelled) => println!("{}", spelled),
+            Err(err) => println!("Spellcheck error for text: {err}"),
+            Ok(spelled) => println!("{spelled}"),
         }
     }
 }
