@@ -11,6 +11,12 @@ Used [Yandex.Speller API](https://tech.yandex.ru/speller/doc/dg/concepts/About-d
 
 ## Installation
 
+* binary
+```bash
+cargo install cargo-binstall && cargo binstall ryaspeller
+```
+
+* from sources
 ```bash
 cargo install ryaspeller
 ```
@@ -35,4 +41,4 @@ let spelled = speller.spell_text("Triky Custle is a funny puzzle game.").unwrap(
 assert!(spelled == "Tricky Castle is a funny puzzle game.");
  ```
 
-Also there are available [python](https://github.com/oriontvv/pyaspeller/) and [javascript](https://github.com/hcodes/yaspeller) versions of this speller.
+There are also available [python](https://github.com/oriontvv/pyaspeller/) and [javascript](https://github.com/hcodes/yaspeller) versions of this speller.
