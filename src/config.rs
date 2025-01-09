@@ -1,6 +1,5 @@
 use std::fmt::Display;
 use std::str::FromStr;
-use std::usize;
 
 /// Describes all supported languages
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
@@ -131,10 +130,11 @@ impl Display for Languages {
 /// config.ignore_digits = true;
 /// speller.spell_text("spelling with updated config");
 /// ```
-
+#[allow(dead_code)]
 #[derive(Clone, Debug, Copy, Default)]
 pub struct Config {
-    _langs: Languages,
+    /// Enabled `Languages` for spelling.
+    pub languages: Languages,
 
     /// Enables html format instead of plain text.
     pub is_html: bool,
@@ -154,32 +154,14 @@ pub struct Config {
 
 #[allow(dead_code)]
 impl Config {
-    /// Returns a Set of enabled [Languages]
-    pub fn languages(&self) -> Languages {
-        self._langs
-    }
-    /// Parses enabled [Languages] fron string representation
-    ///
-    /// Example
-    /// ```rust
-    /// use ryaspeller::Config;
-    /// let mut config = Config::default();
-    /// config.set_languages("en,ru,uk");
-    /// ```
-    pub fn set_languages(&mut self, langs: &str) -> Result<Languages, String> {
-        let languages = Languages::from_str(langs)?;
-        self._langs = languages;
-        Ok(languages)
-    }
-
     /// Enables specified [Language]
     pub fn enable_language(&mut self, language: Language) {
-        self._langs.enable_language(language)
+        self.languages.enable_language(language)
     }
 
     /// Disables specified [Language]
     pub fn disable_language(&mut self, language: Language) {
-        self._langs.disable_language(language)
+        self.languages.disable_language(language)
     }
 }
 
