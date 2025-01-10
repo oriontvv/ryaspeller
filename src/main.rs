@@ -1,9 +1,9 @@
 mod config;
 
-use std::path::Path;
+use std::{path::Path, str::FromStr};
 
 use clap::Parser;
-use ryaspeller::{Config, Speller};
+use ryaspeller::{Config, Languages, Speller};
 
 #[derive(Parser, Debug)]
 #[clap(about, version, author)]
@@ -13,6 +13,8 @@ struct CliArgs {
 
     #[clap(short, long)]
     lang: Option<String>,
+    #[clap(long)]
+    is_html: bool,
     #[clap(long)]
     ignore_digits: bool,
     #[clap(long)]
@@ -24,18 +26,20 @@ struct CliArgs {
 }
 
 fn create_config(args: &mut CliArgs) -> Result<Config, String> {
-    let mut config = Config::default();
+    let languages: Languages = if let Some(lang) = &args.lang {
+        Languages::from_str(lang)?
+    } else {
+        Languages::default()
+    };
 
-    if let Some(lang) = &args.lang {
-        config.set_languages(lang)?;
-    }
-
-    config.ignore_digits = args.ignore_digits;
-    config.ignore_urls = args.ignore_urls;
-    config.find_repeat_words = args.find_repeat_words;
-    config.ignore_capitalization = args.ignore_capitalization;
-
-    Ok(config)
+    Ok(Config {
+        languages,
+        is_html: args.is_html,
+        ignore_digits: args.ignore_digits,
+        ignore_urls: args.ignore_urls,
+        find_repeat_words: args.find_repeat_words,
+        ignore_capitalization: args.ignore_capitalization,
+    })
 }
 
 fn main() {

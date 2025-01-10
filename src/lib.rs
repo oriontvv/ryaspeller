@@ -39,7 +39,7 @@ use std::{
 };
 
 use anyhow::{anyhow, Result};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 pub use config::{Config, Language, Languages};
 use walkdir::WalkDir;
@@ -94,14 +94,6 @@ pub struct Speller {
     pub config: Config,
 
     client: reqwest::blocking::Client,
-}
-
-#[derive(Debug, Serialize)]
-struct RequestData<'a> {
-    text: &'a str,
-    options: u32,
-    lang: &'a str,
-    format: &'a str,
 }
 
 const FORMAT_PLAIN: &str = "plain";
@@ -257,15 +249,13 @@ impl Speller {
             return Err(anyhow!("Input text is too long: {} >= 10000", &text.len()));
         }
 
-        let url = format!(
-            "{}?text={}&options={}&lang={}&format={}",
-            API_URL,
-            text,
-            self.api_options(),
-            self.config.languages(),
-            format,
-        );
-        let response = self.client.get(url).send()?;
+        let query = [
+            ("text", text),
+            ("options", &self.api_options().to_string()),
+            ("lang", &self.config.languages.to_string()),
+            ("format", format),
+        ];
+        let response = self.client.get(API_URL).query(&query).send()?;
 
         if !response.status().is_success() {
             return Err(anyhow!("Failed to call api {}", response.text()?));
