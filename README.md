@@ -1,5 +1,6 @@
 # ryaspeller
 [![Actions Status](https://github.com/oriontvv/ryaspeller/workflows/CI/badge.svg)](https://github.com/oriontvv/ryaspeller/actions)
+[![Coverage badge](https://raw.githubusercontent.com/oriontvv/ryaspeller/coverage/htmlcov/badges/flat.svg)](https://htmlpreview.github.io/?https://github.com/oriontvv/ryaspeller/coverage/htmlcov/index.html) 
 [![dependency status](https://deps.rs/repo/github/oriontvv/ryaspeller/status.svg)](https://deps.rs/repo/github/oriontvv/ryaspeller)
 [![Doc](https://docs.rs/ryaspeller/badge.svg)](https://docs.rs/ryaspeller)
 [![Crates.io](https://img.shields.io/crates/v/ryaspeller.svg)](https://crates.io/crates/ryaspeller)
@@ -7,7 +8,7 @@
 
 [ryaspeller](https://github.com/oriontvv/ryaspeller) (Rust Yandex Speller) is a tool and library for searching typos in text, files and websites.
 
-Used [Yandex.Speller API](https://tech.yandex.ru/speller/doc/dg/concepts/About-docpage/). ([restrictions](<https://yandex.ru/legal/speller_api/>))
+Uses [Yandex.Speller API](https://tech.yandex.ru/speller/doc/dg/concepts/About-docpage/). ([restrictions](<https://yandex.ru/legal/speller_api/>))
 
 ## Installation
 
