@@ -98,6 +98,7 @@ pub struct Speller {
 
 const FORMAT_PLAIN: &str = "plain";
 const FORMAT_HTML: &str = "html";
+const TEXT_LIMIT: usize = 10_000;
 
 const API_URL: &str = "https://speller.yandex.net/services/spellservice.json/checkText";
 
@@ -138,7 +139,7 @@ impl Speller {
     }
 
     fn _spell_text(&self, text: &str, format: &str) -> Result<String> {
-        // TODO: split bit textes into chunks with no more 10000 chars
+        // TODO: split big textes into chunks with no more TEXT_LIMIT chars
         // and make calls async
 
         let spell_results: SpellResults = self.call_api(text, format)?;
@@ -177,8 +178,6 @@ impl Speller {
         if file.read_to_string(&mut content).is_err() {
             return Ok(());
         }
-
-        println!("check {}", path.to_string_lossy());
 
         let result = if let Some(ext) = path.extension() {
             if ext == "html" {
@@ -245,8 +244,11 @@ impl Speller {
     }
 
     fn call_api(&self, text: &str, format: &str) -> Result<SpellResults> {
-        if text.len() >= 10_000 {
-            return Err(anyhow!("Input text is too long: {} >= 10000", &text.len()));
+        if text.len() >= TEXT_LIMIT {
+            return Err(anyhow!(
+                "Input text is too long: {} >= {TEXT_LIMIT}",
+                &text.len()
+            ));
         }
 
         let query = [
@@ -256,12 +258,9 @@ impl Speller {
             ("format", format),
         ];
         let response = self.client.get(API_URL).query(&query).send()?;
-
         if !response.status().is_success() {
             return Err(anyhow!("Failed to call api {}", response.text()?));
         }
-
-        let results = response.json::<SpellResults>()?;
-        Ok(results)
+        response.json().map_err(Into::into)
     }
 }
