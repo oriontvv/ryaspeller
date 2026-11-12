@@ -38,7 +38,7 @@ use std::{
     path::Path,
 };
 
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use serde::Deserialize;
 
 pub use config::{Config, Language, Languages};
