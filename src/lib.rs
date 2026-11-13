@@ -247,7 +247,7 @@ impl Speller {
         if text.len() >= TEXT_LIMIT {
             return Err(anyhow!(
                 "Input text is too long: {} >= {TEXT_LIMIT}",
-                &text.len()
+                text.len()
             ));
         }
 
